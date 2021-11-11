@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace web_Api.Controllers
 {
@@ -13,16 +14,23 @@ namespace web_Api.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private static readonly string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(
+            IHttpContextAccessor httpContextAccessor)
         {
-            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+        }
+        [HttpGet]
+        public string Get4()
+        {
+            Console.WriteLine(JsonSerializer.Serialize(_httpContextAccessor.HttpContext.User));
+            return _httpContextAccessor.HttpContext.User.ToString();
         }
 
         [HttpGet]
@@ -37,6 +45,7 @@ namespace web_Api.Controllers
                 })
                 .ToArray();
         }
+
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> Get2()
         {
@@ -48,7 +57,8 @@ namespace web_Api.Controllers
                     Summary = Summaries[rng.Next(Summaries.Length)]
                 })
                 .ToArray();
-        }        
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> Get3()
         {
