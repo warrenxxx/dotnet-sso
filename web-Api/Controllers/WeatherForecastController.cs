@@ -26,7 +26,8 @@ namespace web_Api.Controllers
         {
             _httpContextAccessor = httpContextAccessor;
         }
-        [HttpGet]
+
+        [HttpGet("[action]")]
         public string Get4()
         {
             Console.WriteLine(JsonSerializer.Serialize(_httpContextAccessor.HttpContext.User));
